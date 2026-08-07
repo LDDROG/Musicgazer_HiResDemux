@@ -18,7 +18,7 @@ Musicgazer是 [MSST-WebUI](https://github.com/SUC-DriverOld/MSST-WebUI) 的一�
 - **无损变频策略**：以最常见的 44.1 kHz 模型分离 48 khz 音频为例，该策略会将频率线性压缩到模型频带，以略微低于原来音高的频率输入模型并输出分轨，再将分轨恢复原速。
 - **频带分离**：在约 20 kHz 处分割音频，低频段送入模型正常分离，高频段使用 20khz 左右的分轨产生的掩码直接分离，本质上是由低频段的分离情况猜测高频段情况，与真正使用Hi-Res训练的模型还是有区别，但可以确保频谱来自原始音频，不存在生成式恢复手段。
 - **模型无关**：适用于所有 MSST 架构（BS-RoFormer、Mel-Band RoFormer、MDX23C、HTDemucs、SCNet、Bandit、Apollo、Mamba2 等），策略仅依赖 `(audio) → {stem: audio}` 接口。
-- **策略自动选择** — `orig_sr / 44100 ≤ 1.15` 时走 varispeed，否则走 band-split，也可手动指定。
+- **策略自动选择**：`orig_sr / 44100 ≤ 1.15` 时走无损变频，否则走频带分离，也可手动指定。
 
 完整技术细节见 [docs/enhance_demux.md](enhance_demux.md)。
 
