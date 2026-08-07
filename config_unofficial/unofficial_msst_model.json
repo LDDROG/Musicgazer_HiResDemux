@@ -1,0 +1,37 @@
+{
+    "multi_stem_models": [
+        {
+            "name": "drumsep_5stems_mdx23c_jarredou.ckpt",
+            "config_path": "config_unofficial\\msst_config\\config_mdx23c.yaml",
+            "model_type": "mdx23c",
+            "link": ""
+        },
+        {
+            "name": "model_mdx23c_ep_120_sdr_4.4174.ckpt",
+            "config_path": "config_unofficial\\msst_config\\config_orchestra_mdx23c.yaml",
+            "model_type": "mdx23c",
+            "link": ""
+        },
+        {
+            "name": "logic_bs_roformer.ckpt",
+            "config_path": "config_unofficial\\msst_config\\logic_pro_config.yaml",
+            "model_type": "bs_roformer",
+            "link": ""
+        }
+    ],
+    "single_stem_models": [],
+    "vocal_models": [
+        {
+            "name": "model_bs_roformer_ep_368_sdr_12.9628.ckpt",
+            "config_path": "config_unofficial\\msst_config\\model_bs_roformer_ep_368_sdr_12.9628 96khz.yaml",
+            "model_type": "bs_roformer",
+            "link": ""
+        },
+        {
+            "name": "bs_roformer_karaoke_frazer_becruily.ckpt",
+            "config_path": "config_unofficial\\msst_config\\config_karaoke_frazer_becruily.yaml",
+            "model_type": "bs_roformer",
+            "link": ""
+        }
+    ]
+}

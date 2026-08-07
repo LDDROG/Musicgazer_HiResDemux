@@ -1,0 +1,47 @@
+# Model weights (download separately from Hugging Face)
+pretrain/
+
+# Python environment
+workenv/
+
+# User data & temp
+logs/
+cache/
+tmpdir/
+input/
+results/
+*.log
+
+# IDE & OS
+__pycache__/
+*.pyc
+*.pyo
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Build / installer artifacts
+*.exe
+*.pyd
+*.dll
+*.so
+*.dylib
+unins000.*
+dist/
+build/
+*.egg-info/
+
+# Bundled binaries (optional, users install separately)
+ffmpeg/
+scripts/
+
+# Backup configs (upstream snapshots)
+configs_backup/
+data_backup/
+
+# Training outputs
+train/**/checkpoints/
+train/**/results/
