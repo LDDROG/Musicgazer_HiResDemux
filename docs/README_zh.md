@@ -2,7 +2,7 @@
 <p align="center"><sub>望乐者</sub></p>
 <div align="center">
 
-[English](../README.md) | 简体中文<br>
+[English](../README.md) | 简体中文 | [繁體中文](README_zh-TW.md) | [日本語](README_ja.md)<br>
 
 </div>
 

@@ -1,16 +1,9 @@
-"""
-Unified high-sample-rate separation pipeline with auto-strategy selection.
-"""
-
 from __future__ import annotations
-
 import numpy as np
 from typing import Literal
-
 from enhance_demux.hires_separator import separate_varispeed, separate_band_split
 
-VARISPEED_MAX_RATIO = 1.15
-
+VARISPEED_MAX_RATIO = 1.15    # 采样率比值，超过该值则使用频带分割
 
 def separate_hires(
     mix: np.ndarray,
@@ -25,31 +18,6 @@ def separate_hires(
     filter_order: int = 8,
     callback=None,
 ) -> dict[str, np.ndarray]:
-    """
-    Separate high-sample-rate audio through a model trained at *target_sr*.
-
-    Parameters
-    ----------
-    mix : np.ndarray, shape (channels, time)
-        Input audio at *orig_sr*.
-    orig_sr : int
-        Native sample rate (e.g. 48000, 96000, 192000).
-    target_sr : int
-        Sample rate the model expects (default 44100).
-    method : str
-        ``"auto"`` — picks varispeed when ratio <= 1.15, else band-split.
-    cutoff_ratio : float
-        (band-split only) Fraction of *target_sr* Nyquist for crossover.
-    filter_order : int
-        (band-split only) Butterworth order for the crossover filter.
-    callback : callable or None
-        Progress callback, passed through to ``demix``.
-
-    Returns
-    -------
-    dict[str, np.ndarray]
-        Separated stems at *orig_sr*.
-    """
     mix = np.asarray(mix, dtype=np.float32)
     if mix.ndim == 1:
         mix = mix[np.newaxis, :]

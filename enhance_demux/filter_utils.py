@@ -1,11 +1,3 @@
-"""
-Linear-phase band-splitting filters.
-
-Provides zero-phase (forward-backward) Butterworth filters to split
-audio into low and high frequency bands with perfect reconstruction
-(low + high == original).
-"""
-
 import numpy as np
 from scipy.signal import butter, sosfiltfilt
 
@@ -15,18 +7,6 @@ def design_lowpass_sos(
     sr: float,
     order: int = 8,
 ) -> np.ndarray:
-    """
-    Design a Butterworth lowpass filter, returned as second-order sections.
-
-    Args:
-        cutoff_hz: -3 dB cutoff frequency in Hz.
-        sr: Sample rate in Hz.
-        order: Butterworth filter order (applied twice via filtfilt,
-               so effective order is 2 * order).
-
-    Returns:
-        SOS array suitable for scipy.signal.sosfiltfilt.
-    """
     nyquist = sr / 2.0
     if cutoff_hz >= nyquist:
         raise ValueError(
@@ -42,26 +22,6 @@ def split_bands(
     order: int = 8,
     pad_samples: int = 8192,
 ) -> tuple[np.ndarray, np.ndarray]:
-    """
-    Split audio into low and high frequency bands with zero-phase filtering.
-
-    The high band is computed as ``audio - low_band``, guaranteeing
-    perfect reconstruction for any filter.
-
-    A reflection pad / trim is applied to suppress filtfilt edge
-    transients.
-
-    Args:
-        audio: Shape ``(..., time)`` array.
-        cutoff_hz: Crossover frequency in Hz.
-        sr: Sample rate in Hz.
-        order: Butterworth filter order.
-        pad_samples: Number of samples to pad at each end for transient
-                     suppression. Default 8192 (~186ms @ 44.1kHz).
-
-    Returns:
-        (low_band, high_band): Both same shape as *audio*.
-    """
     sos = design_lowpass_sos(cutoff_hz, sr, order)
 
     n = audio.shape[-1]

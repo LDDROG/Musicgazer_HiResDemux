@@ -1,27 +1,23 @@
-<h1 align="center">Musicgazer Hi-Res Demux</h1>
+<h1 align="center">Musicgazer</h1>
 <div align="center">
 
-English | [简体中文](docs/README_zh.md)<br>
+English | [简体中文](docs/README_zh.md) | [繁體中文](docs/README_zh-TW.md) | [日本語](docs/README_ja.md)<br>
 
 </div>
 
 ## Introduction
 
-This is a WebUI for [Music-Source-Separation-Training (MSST)](https://github.com/ZFTurbo/Music-Source-Separation-Training), forked from [MSST-WebUI](https://github.com/SUC-DriverOld/MSST-WebUI). It supports inference of MSST and VR models, customizable preset processing pipelines, model installation, advanced ensemble mode, and [SOME](https://github.com/openvpi/SOME/) integration.
-
-**This fork adds native hi-res audio support** — separate 48/96/192 kHz audio through models trained on 44.1 kHz, without losing ultrasonic content.
+Musicgazer is an enhanced fork of [MSST-WebUI](https://github.com/SUC-DriverOld/MSST-WebUI) that adds hi-res audio source separation — output always at the original sample rate regardless of the model's training rate (except when the input rate is lower). MSST-WebUI is a WebUI for [Music-Source-Separation-Training (MSST)](https://github.com/ZFTurbo/Music-Source-Separation-Training), supporting model training and inference, customizable preset processing pipelines, model installation, advanced ensemble mode, and [SOME](https://github.com/openvpi/SOME/) integration.
 
 > [!IMPORTANT]
-> The upstream [MSST-WebUI](https://github.com/SUC-DriverOld/MSST-WebUI) project has announced it will stop maintenance. Users are encouraged to check the original repository for the latest status and migration recommendations (e.g., [pymss](https://github.com/pymss-project/pymss)). This fork focuses exclusively on the hi-res demux enhancement and is maintained independently.
+> [MSST-WebUI](https://github.com/SUC-DriverOld/MSST-WebUI) is ceasing maintenance. Check the original repository for the latest status and migration options (e.g., [pymss](https://github.com/pymss-project/pymss)), or port to UVR5 or other hosts. This project only maintains the hi-res audio separation feature.
 
 ## Key Features
 
-- **Varispeed for 48 kHz** — raw samples are fed to the model at native rate; frequencies are linearly compressed into the model bandwidth with zero quality loss.
-- **Band-split + harmonic mask extrapolation for 96/192 kHz** — audio is split at ~20 kHz; the low band goes through the model, the high band is redistributed across stems via per-bin soft masks extrapolated from the model's own separation decisions.
-- **No generative synthesis** — all high-frequency content comes from the original recording. No neural upsampling, no harmonic generation, no saturation.
+- **Lossless Varispeed**: For the common case of separating 48 kHz audio with a 44.1 kHz model, this strategy linearly compresses all frequencies into the model bandwidth, runs inference at a slightly lower pitch, then restores the outputs to the original speed and pitch. Zero quality loss.
+- **Band-split**: Splits audio at ~20 kHz. The low band goes through the model normally; the high band is separated using masks derived from each stem's behavior around 20 kHz. The HF distribution is essentially inferred from the low-band separation. This differs from a model genuinely trained on hi-res audio, but all spectral content comes from the original recording — no generative restoration.
 - **Model-agnostic** — works with any MSST architecture (BS-RoFormer, Mel-Band RoFormer, MDX23C, HTDemucs, SCNet, Bandit, Apollo, Mamba2, etc.). The strategies only depend on the `(audio) → {stem: audio}` interface.
-- **Zero overhead for 44.1 kHz input** — standard inference path is used when no upsampling is needed.
-- **Auto strategy selection** — picks varispeed when `orig_sr / 44100 ≤ 1.15`, band-split otherwise. Manual override available.
+- **Auto strategy selection** — picks varispeed when `orig_sr / model_sr ≤ 1.15`, band-split otherwise. Manual override available.
 
 See [docs/enhance_demux.md](docs/enhance_demux.md) for the full technical breakdown.
 
@@ -34,7 +30,12 @@ See [docs/enhance_demux.md](docs/enhance_demux.md) for the full technical breakd
    Hi-res separation enabled | orig_sr: 96000 Hz → model_sr: 44100 Hz | strategy: band_split
    Separation complete: your_audio.flac → output_sr: 96000 Hz
    ```
-4. Output files retain the original sample rate with all high-frequency content preserved.
+4. Verify that the output files retain the original sample rate.
+
+<div align="center">
+    <img src="test_result_image/1.png" alt="test result 1" width="45%">
+    <img src="test_result_image/2.png" alt="test result 2" width="45%">
+</div>
 
 ## Usage
 
