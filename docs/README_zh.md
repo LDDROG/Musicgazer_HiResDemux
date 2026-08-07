@@ -1,4 +1,5 @@
-<h1 align="center">Musicgazer Hi-Res Demux</h1>
+<h1 align="center">Musicgazer</h1>
+<p align="center"><sub>望乐者</sub></p>
 <div align="center">
 
 [English](../README.md) | 简体中文<br>
@@ -7,20 +8,16 @@
 
 ## 简介
 
-本项目是 [MSST-WebUI](https://github.com/SUC-DriverOld/MSST-WebUI) 的 fork，后者是基于 [Music-Source-Separation-Training (MSST)](https://github.com/ZFTurbo/Music-Source-Separation-Training) 的 WebUI 应用。支持 MSST 模型和 VR 模型的推理、自定义预设处理流程、模型安装、高级合奏模式，以及 [SOME](https://github.com/openvpi/SOME/) 集成。
-
-**本 fork 新增原生高解析度音频支持**——让训练在 44.1 kHz 上的模型能够分离 48/96/192 kHz 音频，超声波频段信息不丢失。
+Musicgazer是 [MSST-WebUI](https://github.com/SUC-DriverOld/MSST-WebUI) 的一个改进，新增了高解析度音频分离功能，即无论使用什么采样率的分离模型都能按原音频采样率输出（低于模型采样率的除外）。MSST-WebUI是 [Music-Source-Separation-Training (MSST)](https://github.com/ZFTurbo/Music-Source-Separation-Training) 的 WebUI 应用，支持各种音频模型的训练和推理、自定义预设处理流程、模型安装、高级合奏模式，以及 [SOME](https://github.com/openvpi/SOME/) 集成。
 
 > [!IMPORTANT]
-> 上游 [MSST-WebUI](https://github.com/SUC-DriverOld/MSST-WebUI) 项目已宣布将停止维护，建议用户查阅原仓库了解最新状态及迁移方案（如 [pymss](https://github.com/pymss-project/pymss)）。本 fork 专注于 hi-res demux 增强功能，独立维护。
+> [MSST-WebUI](https://github.com/SUC-DriverOld/MSST-WebUI) 即将停止维护，建议查阅原仓库了解最新状态及迁移方案（如 [pymss](https://github.com/pymss-project/pymss)），或移植到 UVR5 等其他宿主。本项目仅维护高解析度音频分离功能。
 
-## 核心特性
+## 重要特性
 
-- **48 kHz Varispeed 策略** — 原始采样点直接送入模型，不做重采样；频率被线性压缩进模型带宽，零质量损失。
-- **96/192 kHz 频带分离 + 谐波 mask 外推** — 音频在约 20 kHz 处分割；低频段送入模型正常分离，高频段通过逐 bin 软 mask 将原始超声能量分配到各 stem。
-- **零生成式合成** — 所有高频内容来源于原始录音。无神经网络上采样、无谐波生成、无饱和器。
-- **模型无关** — 适用于所有 MSST 架构（BS-RoFormer、Mel-Band RoFormer、MDX23C、HTDemucs、SCNet、Bandit、Apollo、Mamba2 等），策略仅依赖 `(audio) → {stem: audio}` 接口。
-- **44.1 kHz 输入零开销** — 输入即为模型采样率时走标准推理路径，无额外计算。
+- **无损变频策略**：以最常见的 44.1 kHz 模型分离 48 khz 音频为例，该策略会将频率线性压缩到模型频带，以略微低于原来音高的频率输入模型并输出分轨，再将分轨恢复原速。
+- **频带分离**：在约 20 kHz 处分割音频，低频段送入模型正常分离，高频段使用 20khz 左右的分轨产生的掩码直接分离，本质上是由低频段的分离情况猜测高频段情况，与真正使用Hi-Res训练的模型还是有区别，但可以确保频谱来自原始音频，不存在生成式恢复手段。
+- **模型无关**：适用于所有 MSST 架构（BS-RoFormer、Mel-Band RoFormer、MDX23C、HTDemucs、SCNet、Bandit、Apollo、Mamba2 等），策略仅依赖 `(audio) → {stem: audio}` 接口。
 - **策略自动选择** — `orig_sr / 44100 ≤ 1.15` 时走 varispeed，否则走 band-split，也可手动指定。
 
 完整技术细节见 [docs/enhance_demux.md](enhance_demux.md)。
@@ -34,7 +31,12 @@
    Hi-res separation enabled | orig_sr: 96000 Hz → model_sr: 44100 Hz | strategy: band_split
    Separation complete: your_audio.flac → output_sr: 96000 Hz
    ```
-4. 输出文件保持原始采样率，高频内容完整保留。
+4. 观察输出文件已保持原始采样率。
+
+<div align="center">
+    <img src="../test_result_image/1.png" alt="test result 1" width="45%">
+    <img src="../test_result_image/2.png" alt="test result 2" width="45%">
+</div>
 
 ## 使用方式
 
