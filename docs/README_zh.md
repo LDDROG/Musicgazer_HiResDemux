@@ -1,5 +1,4 @@
-<div align="center"><img src="logo.png" alt="logo" width="128" height="128"></div>
-<h1 align="center">MSST-WebUI — Hi-Res Demux</h1>
+<h1 align="center">Musicgazer Hi-Res Demux</h1>
 <div align="center">
 
 [English](../README.md) | 简体中文<br>
