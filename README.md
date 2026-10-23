@@ -1,6 +1,8 @@
 <h1 align="center">Musicgazer</h1>
 <div align="center">
 
+## from LDD_ROG REMASTER
+
 English | [简体中文](docs/README_zh.md) | [繁體中文](docs/README_zh-TW.md) | [日本語](docs/README_ja.md)<br>
 
 </div>
